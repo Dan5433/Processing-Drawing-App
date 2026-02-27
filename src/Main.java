@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Stack;
 
 public final class Main extends PApplet {
@@ -162,11 +163,14 @@ public final class Main extends PApplet {
         String description = isAltPressed ? "Processing Sketch (*.pde)" : "Drawing App Sketch (*.json)";
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extension);
-        chooser.setFileFilter(filter);
-        chooser.setAcceptAllFileFilterUsed(false);
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setDialogTitle(isAltPressed ? "Export As Processing Sketch" : "Save As Drawing App Sketch");
         chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        chooser.setSelectedFile(Paths.get(chooser.getCurrentDirectory().getAbsolutePath(), "drawing." + extension).toFile());
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setFileFilter(filter);
+        chooser.setVisible(true);
 
         int result = chooser.showSaveDialog(null);
 
