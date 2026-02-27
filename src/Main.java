@@ -204,8 +204,6 @@ public final class Main extends PApplet {
         Utils.writeStrokeColor(writer, currentStrokeColor);
         Utils.writeStrokeWeight(writer, currentStrokeWeight);
         for (Drawable drawable : drawables) {
-            writer.println();
-
             int drawableFillColor = drawable.getFillColor();
             int drawableStrokeColor = drawable.getStrokeColor();
             int drawableStrokeWeight = drawable.getStrokeWeight();

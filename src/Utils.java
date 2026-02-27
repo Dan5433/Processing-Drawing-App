@@ -24,14 +24,14 @@ public final class Utils {
     }
 
     static void writeFillColor(PrintWriter writer, int color) {
-        writer.printf("fill(%d);", color);
+        writer.printf("fill(%d);\n", color);
     }
 
     static void writeStrokeColor(PrintWriter writer, int color) {
-        writer.printf("stroke(%d);", color);
+        writer.printf("stroke(%d);\n", color);
     }
 
     static void writeStrokeWeight(PrintWriter writer, int weight) {
-        writer.printf("fill(%d);", weight);
+        writer.printf("strokeWeight(%d);\n", weight);
     }
 }
