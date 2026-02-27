@@ -1,8 +1,23 @@
+# IntelliJ IDEA / WebStorm / PhpStorm / PyCharm
+.idea/
+*.iml
+*.iws
+/out/
+
+# Build artifacts
+/target/
+
+# System / OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+logs/
+*.log
+*.tmp
+
 # Compiled class file
 *.class
-
-# Log file
-*.log
 
 # BlueJ files
 *.ctxt
@@ -11,7 +26,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
