@@ -232,7 +232,7 @@ public final class Main extends PApplet {
         writer.close();
     }
 
-    void saveSerialized(File file) {
+    public void saveSerialized(File file) {
         if (file == null)
             return;
 

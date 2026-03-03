@@ -3,16 +3,20 @@ package src.Drawable;
 import processing.core.PApplet;
 import processing.data.JSONObject;
 
+import java.lang.reflect.Field;
+
 public abstract class Drawable {
-    int startX;
-    int startY;
+    protected int startX;
+    protected int startY;
 
-    int mouseX;
-    int mouseY;
+    protected int mouseX;
+    protected int mouseY;
 
-    int strokeColor;
-    int fillColor;
-    int strokeWeight;
+    protected int strokeColor;
+    protected int fillColor;
+    protected int strokeWeight;
+
+    protected int thickness;
 
     abstract public void draw(PApplet app);
 
@@ -29,16 +33,19 @@ public abstract class Drawable {
     }
 
     public JSONObject toJson() {
+        Class<? extends Drawable> drawableClass = getClass();
+
         JSONObject json = new JSONObject();
-        //TODO: implement json saving
-//        json.setString("type", class.getName());
-//        json.setInt("x1", x1);
-//        json.setInt("y1", y1);
-//        json.setInt("x2", x2);
-//        json.setInt("y2", y2);
-//        json.setInt("fill", fillColor);
-//        json.setInt("stroke", strokeColor);
-//        json.setInt("weight", strokeWeight);
+
+        json.setString("type", drawableClass.getSimpleName());
+        serializeToJson(drawableClass, json);
+
+        Class<?> parentClass = drawableClass.getSuperclass();
+        while (parentClass != null) {
+            serializeToJson(parentClass, json);
+            parentClass = parentClass.getSuperclass();
+        }
+
         return json;
     }
 
@@ -52,5 +59,20 @@ public abstract class Drawable {
 
     public int getStrokeWeight() {
         return strokeWeight;
+    }
+
+    private void serializeToJson(Class<?> drawableClass, JSONObject jsonObject) {
+        for (Field field : drawableClass.getDeclaredFields()) {
+            Object value = null;
+
+            try {
+                value = field.get(this);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            if (value != null)
+                jsonObject.put(field.getName(), value);
+        }
     }
 }
