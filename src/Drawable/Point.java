@@ -1,12 +1,13 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.data.JSONObject;
 
 public class Point extends Drawable {
     protected int x, y;
 
-    public Point(int x, int y, int strokeColor, int fillColor, int strokeWeight) {
-        super(fillColor, strokeColor, strokeWeight);
+    public Point(int x, int y, int strokeColor, int strokeWeight) {
+        super(0, strokeColor, strokeWeight);
         this.x = x;
         this.y = y;
     }
@@ -21,5 +22,13 @@ public class Point extends Drawable {
     @Override
     public String toProcessingCode() {
         return String.format("point(%d,%d);", x, y);
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+        json.put("x", x);
+        json.put("y", y);
+        return json;
     }
 }

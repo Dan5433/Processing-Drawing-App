@@ -14,7 +14,7 @@ public enum Tool {
                 main.point(main.mouseX, main.mouseY);
             },
             main -> new src.Drawable.Point(main.mouseX, main.mouseY,
-                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
+                    main.getStrokeColor(), main.getStrokeWeight())),
 
     LINE(
             main -> {
@@ -71,10 +71,6 @@ public enum Tool {
         this.drawPreview = drawPreview;
         this.draw = draw;
         this.getDrawable = getDrawable;
-    }
-
-    public static int getMax() {
-        return values().length - 1;
     }
 
     public void drawPreview(Main main) {
