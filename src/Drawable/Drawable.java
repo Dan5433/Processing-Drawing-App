@@ -6,31 +6,19 @@ import processing.data.JSONObject;
 import java.lang.reflect.Field;
 
 public abstract class Drawable {
-    protected int startX;
-    protected int startY;
-
-    protected int mouseX;
-    protected int mouseY;
-
-    protected int strokeColor;
     protected int fillColor;
+    protected int strokeColor;
     protected int strokeWeight;
 
-    protected int thickness;
-
-    abstract public void draw(PApplet app);
-
-    public abstract String toProcessingCode();
-
-    public Drawable(int startX, int startY, int mouseX, int mouseY, int strokeColor, int fillColor, int strokeWeight) {
-        this.startX = startX;
-        this.startY = startY;
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
-        this.strokeColor = strokeColor;
+    protected Drawable(int fillColor, int strokeColor, int strokeWeight) {
         this.fillColor = fillColor;
+        this.strokeColor = strokeColor;
         this.strokeWeight = strokeWeight;
     }
+
+    public abstract void draw(PApplet app);
+
+    public abstract String toProcessingCode();
 
     public JSONObject toJson() {
         Class<? extends Drawable> drawableClass = getClass();
@@ -49,18 +37,6 @@ public abstract class Drawable {
         return json;
     }
 
-    public int getFillColor() {
-        return fillColor;
-    }
-
-    public int getStrokeColor() {
-        return strokeColor;
-    }
-
-    public int getStrokeWeight() {
-        return strokeWeight;
-    }
-
     private void serializeToJson(Class<?> drawableClass, JSONObject jsonObject) {
         for (Field field : drawableClass.getDeclaredFields()) {
             Object value = null;
@@ -74,5 +50,17 @@ public abstract class Drawable {
             if (value != null)
                 jsonObject.put(field.getName(), value);
         }
+    }
+
+    public int getFillColor() {
+        return fillColor;
+    }
+
+    public int getStrokeColor() {
+        return strokeColor;
+    }
+
+    public int getStrokeWeight() {
+        return strokeWeight;
     }
 }

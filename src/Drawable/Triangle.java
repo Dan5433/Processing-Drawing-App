@@ -2,7 +2,7 @@ package src.Drawable;
 
 import processing.core.PApplet;
 
-public class Triangle extends Drawable {
+public class Triangle extends TwoPointsDrawable {
     public Triangle(int startX, int startY, int endX, int endY, int strokeColor, int fillColor, int strokeWeight) {
         super(startX, startY, endX, endY, strokeColor, fillColor, strokeWeight);
     }
@@ -12,11 +12,11 @@ public class Triangle extends Drawable {
         app.stroke(strokeColor);
         app.fill(fillColor);
         app.strokeWeight(strokeWeight);
-        app.triangle(startX, mouseY, startX + (mouseX - startX) / 2f, startY, mouseX, mouseY);
+        app.triangle(startX, endY, startX + (endX - startX) / 2f, startY, endX, endY);
     }
 
     @Override
     public String toProcessingCode() {
-        return String.format("triangle(%d,%d,%f,%d,%d,%d);", startX, mouseY, startX + (mouseX - startX) / 2f, startY, mouseX, mouseY);
+        return String.format("triangle(%d,%d,%f,%d,%d,%d);", startX, endY, startX + (endX - startX) / 2f, startY, endX, endY);
     }
 }
