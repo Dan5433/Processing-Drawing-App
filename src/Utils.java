@@ -1,6 +1,10 @@
 package src;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 public final class Utils {
     public static int clamp(int min, int max, int value) {
@@ -33,5 +37,23 @@ public final class Utils {
 
     public static void writeStrokeWeight(PrintWriter writer, int weight) {
         writer.printf("strokeWeight(%d);\n", weight);
+    }
+
+    public static File runFileChooser(JFileChooser chooser, String extension, FileNameExtensionFilter filter) {
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        chooser.setSelectedFile(Paths.get(chooser.getCurrentDirectory().getAbsolutePath(), "drawing." + extension).toFile());
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setFileFilter(filter);
+        chooser.setVisible(true);
+
+        int result = chooser.getDialogType() == JFileChooser.OPEN_DIALOG
+                ? chooser.showOpenDialog(null)
+                : chooser.showSaveDialog(null);
+
+        if (result != JFileChooser.APPROVE_OPTION)
+            return null;
+
+        return chooser.getSelectedFile();
     }
 }

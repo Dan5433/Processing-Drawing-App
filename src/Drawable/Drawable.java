@@ -4,6 +4,7 @@ import processing.core.PApplet;
 import processing.data.JSONObject;
 
 public abstract class Drawable {
+    public static final String DRAWABLE_TYPE_JSON_KEY = "type";
     protected int fillColor;
     protected int strokeColor;
     protected int strokeWeight;
@@ -14,13 +15,18 @@ public abstract class Drawable {
         this.strokeWeight = strokeWeight;
     }
 
-    public abstract void draw(PApplet app);
-
-    public abstract String toProcessingCode();
+    public Drawable(JSONObject json) {
+        this.fillColor = json.getInt("fillColor");
+        this.strokeColor = json.getInt("strokeColor");
+        this.strokeWeight = json.getInt("strokeWeight");
+    }
 
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.setString("type", this.getClass().getSimpleName());
+        json.setString(DRAWABLE_TYPE_JSON_KEY, this.getClass().getSimpleName());
+        json.setInt("fillColor", fillColor);
+        json.setInt("strokeColor", strokeColor);
+        json.setInt("strokeWeight", strokeWeight);
         return json;
     }
 
@@ -35,4 +41,8 @@ public abstract class Drawable {
     public int getStrokeWeight() {
         return strokeWeight;
     }
+
+    public abstract void draw(PApplet app);
+
+    public abstract String toProcessingCode();
 }

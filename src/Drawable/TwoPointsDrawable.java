@@ -17,13 +17,21 @@ public abstract class TwoPointsDrawable extends Drawable {
         this.endY = endY;
     }
 
+    public TwoPointsDrawable(JSONObject json) {
+        super(json);
+        this.startX = json.getInt("startX");
+        this.startY = json.getInt("startY");
+        this.endX = json.getInt("endX");
+        this.endY = json.getInt("endY");
+    }
+
     @Override
     public JSONObject toJson() {
         JSONObject json = super.toJson();
-        json.put("startX", startX);
-        json.put("startY", startY);
-        json.put("endX", endX);
-        json.put("endY", endY);
+        json.setInt("startX", startX);
+        json.setInt("startY", startY);
+        json.setInt("endX", endX);
+        json.setInt("endY", endY);
         return json;
     }
 }

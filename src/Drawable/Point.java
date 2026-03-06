@@ -12,6 +12,12 @@ public class Point extends Drawable {
         this.y = y;
     }
 
+    public Point(JSONObject json) {
+        super(json);
+        this.x = json.getInt("x");
+        this.y = json.getInt("y");
+    }
+
     @Override
     public void draw(PApplet app) {
         app.stroke(strokeColor);
@@ -27,8 +33,8 @@ public class Point extends Drawable {
     @Override
     public JSONObject toJson() {
         JSONObject json = super.toJson();
-        json.put("x", x);
-        json.put("y", y);
+        json.setInt("x", x);
+        json.setInt("y", y);
         return json;
     }
 }
