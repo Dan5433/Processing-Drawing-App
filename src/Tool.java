@@ -13,8 +13,8 @@ public enum Tool {
             main -> {
                 main.point(main.mouseX, main.mouseY);
             },
-            main -> new src.Drawable.Point(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY,
-                    main.getStrokeColor(), main.getFillColor(), main.getStrokeWeight())),
+            main -> new src.Drawable.Point(main.mouseX, main.mouseY,
+                    main.getStrokeColor(), main.getStrokeWeight())),
 
     LINE(
             main -> {
@@ -26,7 +26,7 @@ public enum Tool {
                 main.line(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY);
             },
             main -> new src.Drawable.Line(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY,
-                    main.getStrokeColor(), main.getFillColor(), main.getStrokeWeight())),
+                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
     RECT(
             main -> {
                 main.rect(main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight(),
@@ -37,7 +37,7 @@ public enum Tool {
                 main.rect(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY);
             },
             main -> new src.Drawable.Rectangle(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY,
-                    main.getStrokeColor(), main.getFillColor(), main.getStrokeWeight())),
+                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
     ELLIPSE(
             main -> {
                 main.ellipse(main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight(),
@@ -47,7 +47,7 @@ public enum Tool {
                 main.ellipse(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY);
             },
             main -> new src.Drawable.Ellipse(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY,
-                    main.getStrokeColor(), main.getFillColor(), main.getStrokeWeight())),
+                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
     TRIANGLE(
             main -> {
                 main.triangle(main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight() * 2, main.mouseY,
@@ -61,7 +61,7 @@ public enum Tool {
                         main.mouseX, main.mouseY);
             },
             main -> new src.Drawable.Triangle(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY,
-                    main.getStrokeColor(), main.getFillColor(), main.getStrokeWeight()));
+                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
 
     private final Consumer<Main> drawPreview;
     private final Consumer<Main> draw;
@@ -71,10 +71,6 @@ public enum Tool {
         this.drawPreview = drawPreview;
         this.draw = draw;
         this.getDrawable = getDrawable;
-    }
-
-    public static int getMax() {
-        return values().length - 1;
     }
 
     public void drawPreview(Main main) {

@@ -2,15 +2,16 @@ package src;
 
 import processing.core.PApplet;
 import processing.data.JSONArray;
+import processing.data.JSONObject;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 import src.Drawable.Drawable;
+import src.Drawable.DrawableFactory;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.PrintWriter;
-import java.nio.file.Paths;
 import java.util.Stack;
 
 public final class Main extends PApplet {
@@ -41,6 +42,12 @@ public final class Main extends PApplet {
     public void setup() {
         rectMode(CORNERS);
         ellipseMode(CORNERS);
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {
+            System.out.println("Error setting UI: " + ignored);
+        }
     }
 
     public void draw() {
@@ -126,6 +133,9 @@ public final class Main extends PApplet {
             case 's':
                 save(event.isAltDown());
                 break;
+            case 'l':
+                load();
+                break;
         }
     }
 
@@ -152,32 +162,18 @@ public final class Main extends PApplet {
         if (drawables.isEmpty())
             return;
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {
-            System.out.println("Error setting UI: " + ignored);
-        }
-
         JFileChooser chooser = new JFileChooser();
         String extension = isAltPressed ? "pde" : "json";
         String description = isAltPressed ? "Processing Sketch (*.pde)" : "Drawing App Sketch (*.json)";
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extension);
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setDialogTitle(isAltPressed ? "Export As Processing Sketch" : "Save As Drawing App Sketch");
-        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        chooser.setSelectedFile(Paths.get(chooser.getCurrentDirectory().getAbsolutePath(), "drawing." + extension).toFile());
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileFilter(filter);
-        chooser.setVisible(true);
 
-        int result = chooser.showSaveDialog(null);
-
-        if (result != JFileChooser.APPROVE_OPTION)
+        File file = Utils.runFileChooser(chooser, extension, filter);
+        if (file == null)
             return;
 
-        File file = chooser.getSelectedFile();
         if (!file.getName().toLowerCase().endsWith("." + extension))
             file = new File(file.getAbsolutePath() + "." + extension);
 
@@ -187,7 +183,24 @@ public final class Main extends PApplet {
             saveSerialized(file);
     }
 
-    public void exportAsProcessingCode(File file) {
+    void load() {
+        JFileChooser chooser = new JFileChooser();
+        String extension = "json";
+        String description = "Drawing App Sketch (*.json)";
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extension);
+        chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        chooser.setDialogTitle("Load Drawing App Sketch Json");
+
+        File file = Utils.runFileChooser(chooser, extension, filter);
+        if (file == null)
+            return;
+
+        for (JSONObject serializedDrawable : loadJSONArray(file).objectValues())
+            drawables.push(DrawableFactory.create(serializedDrawable));
+    }
+
+    void exportAsProcessingCode(File file) {
         if (file == null)
             return;
 
@@ -237,7 +250,6 @@ public final class Main extends PApplet {
             return;
 
         JSONArray array = new JSONArray();
-
         for (Drawable drawable : drawables)
             array.append(drawable.toJson());
 
