@@ -11,6 +11,7 @@ A drawing app made with the Processing 4 language
 * Color Swapping with Shift Key
 * Undo and Redo
 * Exporting as a Processing Sketch
+* Saving and Loading Serialised JSON
 
 ### In development
 
