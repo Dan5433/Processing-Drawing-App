@@ -10,6 +10,7 @@ public final class DrawableFactory {
             case "Rectangle" -> new Rectangle(json);
             case "Ellipse" -> new Ellipse(json);
             case "Triangle" -> new Triangle(json);
+            case "Polygon" -> new Polygon(json);
             default ->
                     throw new IllegalStateException("Unexpected drawable type: " + json.getString(Drawable.DRAWABLE_TYPE_JSON_KEY));
         };

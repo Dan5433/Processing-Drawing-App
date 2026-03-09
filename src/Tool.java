@@ -61,7 +61,21 @@ public enum Tool {
                         main.mouseX, main.mouseY);
             },
             main -> new src.Drawable.Triangle(main.getStartX(), main.getStartY(), main.mouseX, main.mouseY,
-                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
+                    main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
+    POLYGON(
+            main -> {
+                main.beginShape();
+                main.vertex(main.mouseX, main.mouseY);
+                main.triangle(main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight() * 2, main.mouseY,
+                        main.mouseX - main.PREVIEW_SIZE / 2f - main.getStrokeWeight(),
+                        main.mouseY - main.PREVIEW_SIZE - main.getStrokeWeight() * 2,
+                        main.mouseX, main.mouseY);
+            },
+            main -> {
+                main.shape(main.getPolygon());
+            },
+            main -> new src.Drawable.Polygon(main.getPolygon()));
+
 
     private final Consumer<Main> drawPreview;
     private final Consumer<Main> draw;
