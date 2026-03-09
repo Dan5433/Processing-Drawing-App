@@ -15,8 +15,8 @@ public class Polygon extends Drawable {
         this.vertices = vertices;
     }
 
-    public Polygon(PShape shape) {
-        super(shape.getFill(0), shape.getStroke(0), (int) shape.getStrokeWeight(0));
+    public Polygon(PShape shape, src.Main main) {
+        super(main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight());
         this.shape = shape;
     }
 

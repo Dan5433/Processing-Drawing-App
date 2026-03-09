@@ -51,8 +51,8 @@ public final class Main extends PApplet {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {
-            System.out.println("Error setting UI: " + ignored);
+        } catch (Exception e) {
+            System.out.println("Error setting UI: " + e);
         }
     }
 
@@ -181,9 +181,9 @@ public final class Main extends PApplet {
 
     void pushDrawing() {
         cursor(ARROW);
-        polygon = null;
         drawables.push(selectedTool.getDrawable(this));
         undoneDrawables.clear();
+        polygon = null;
     }
 
     void undo() {
