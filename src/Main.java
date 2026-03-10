@@ -146,20 +146,24 @@ public final class Main extends PApplet {
         polygon.beginShape();
         for (PVector vertex : polygonVertices)
             polygon.vertex(vertex.x, vertex.y);
-        polygon.vertex(mouseX, mouseY);
         polygon.endShape(OPEN);
 
-        if (polygonVertices.size() < 3)
+        if (polygonVertices.size() < 3) {
+            polygon.vertex(mouseX, mouseY);
             return;
+        }
 
         boolean isMouseCloseToStart = Utils.isPointWithinDistance(mouseX, mouseY,
                 (int) polygon.getVertexX(0), (int) polygon.getVertexY(0), POLYGON_CLOSE_SNAP_DISTANCE);
         if (isMouseCloseToStart) {
-            if (mousePressed)
+            if (mousePressed) {
+                polygon.setVertex(polygonVertices.size() - 1, polygon.getVertex(0));
+                polygonVertices.pop();
                 pushDrawing();
-            else
-                polygon.setVertex(polygonVertices.size(), polygon.getVertex(0));
-        }
+            } else
+                polygon.vertex(polygon.getVertexX(0), polygon.getVertexY(0));
+        } else
+            polygon.vertex(mouseX, mouseY);
     }
 
     void controlModifiedKeyPress(KeyEvent event) {
@@ -183,6 +187,7 @@ public final class Main extends PApplet {
         cursor(ARROW);
         drawables.push(selectedTool.getDrawable(this));
         undoneDrawables.clear();
+        polygonVertices.clear();
         polygon = null;
     }
 
@@ -329,11 +334,7 @@ public final class Main extends PApplet {
     }
 
     public PVector[] getPolygonVertices() {
-        PVector[] vertices = new PVector[polygon.getVertexCount()];
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i] = polygon.getVertex(i);
-        }
-        return vertices;
+        return polygonVertices.toArray(new PVector[0]);
     }
 
     enum PropertyChangeMode {

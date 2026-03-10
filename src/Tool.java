@@ -66,7 +66,7 @@ public enum Tool {
                 if (polygon != null)
                     main.shape(polygon);
             },
-            main -> new src.Drawable.Polygon(main.getPolygon(), main));
+            main -> new src.Drawable.Polygon(main.getPolygonVertices(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
 
 
     private final Consumer<Main> drawPreview;
