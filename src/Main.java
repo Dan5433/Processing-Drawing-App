@@ -66,6 +66,12 @@ public final class Main extends PApplet {
         stroke(getStrokeColor());
         strokeWeight(strokeWeight);
 
+        if (polygon != null) {
+            polygon.setFill(getFillColor());
+            polygon.setStroke(getStrokeColor());
+            polygon.setStrokeWeight(strokeWeight);
+        }
+
         if (polygon == null && (!mousePressed || mouseButton != LEFT))
             selectedTool.drawPreview(this);
         else
@@ -102,7 +108,7 @@ public final class Main extends PApplet {
                     break;
 
                 polygonVertices.push(new PVector(mouseX, mouseY));
-                UpdatePolygon();
+                updatePolygon();
 
                 break;
             case RIGHT:
@@ -133,7 +139,7 @@ public final class Main extends PApplet {
         if (polygon == null || selectedTool != Tool.POLYGON)
             return;
 
-        UpdatePolygon();
+        updatePolygon();
     }
 
     public void keyPressed(KeyEvent event) {
@@ -141,7 +147,7 @@ public final class Main extends PApplet {
             controlModifiedKeyPress(event);
     }
 
-    void UpdatePolygon() {
+    void updatePolygon() {
         polygon = createShape();
         polygon.beginShape();
         for (PVector vertex : polygonVertices)
