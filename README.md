@@ -7,14 +7,14 @@ A drawing app made with the Processing 4 language
 ### Complete
 
 * Drawing Tools (point, line, rect, ellipse, triangle)
-* Preset Colors (black, red, orange, yellow, green, cyan, blue, violet, magenta, white)
-* Color Swapping with Shift Key
+* Preset Colours (black, red, orange, yellow, green, cyan, blue, violet, magenta, white)
+* Colour Swapping with Shift Key
+* Polygon Tool (straight and curved)
 * Undo and Redo
 * Exporting as a Processing Sketch
 * Saving and Loading Serialised JSON
 
 ### In development
 
-* Custom Colors
-* Polyline Tool (Custom Shapes)
-* Same Width and Height Shapes Ctrl Key
+* Custom Colours
+* Same Width and Height Shapes with Ctrl Key
