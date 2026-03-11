@@ -1,6 +1,7 @@
 package src;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 import processing.event.KeyEvent;
@@ -21,6 +22,7 @@ public final class Main extends PApplet {
 
     public final int PREVIEW_SIZE = 15;
     public final int MAX_STROKE_WEIGHT = 12;
+    public final int POLYGON_CLOSE_SNAP_DISTANCE = 25;
 
     private final Stack<Drawable> drawables = new Stack<>();
     private final Stack<Drawable> undoneDrawables = new Stack<>();
@@ -34,6 +36,8 @@ public final class Main extends PApplet {
     private int startX;
     private int startY;
 
+    private final Stack<PVector> polygonVertices = new Stack<>();
+
     public void settings() {
 //        size(800, 450);
         fullScreen();
@@ -45,8 +49,8 @@ public final class Main extends PApplet {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {
-            System.out.println("Error setting UI: " + ignored);
+        } catch (Exception e) {
+            System.out.println("Error setting UI: " + e);
         }
     }
 
@@ -60,10 +64,14 @@ public final class Main extends PApplet {
         stroke(getStrokeColor());
         strokeWeight(strokeWeight);
 
-        if (!mousePressed || mouseButton != LEFT)
+        if (polygonVertices.isEmpty() && (!mousePressed || mouseButton != LEFT))
             selectedTool.drawPreview(this);
         else
             selectedTool.draw(this);
+
+
+        if (!polygonVertices.isEmpty() && (selectedTool == Tool.POLYGON || selectedTool == Tool.CURVED_POLYGON))
+            updatePolygon();
     }
 
     public void mouseWheel(MouseEvent event) {
@@ -92,6 +100,12 @@ public final class Main extends PApplet {
                 cursor(CROSS);
                 startX = mouseX;
                 startY = mouseY;
+                if (selectedTool != Tool.POLYGON && selectedTool != Tool.CURVED_POLYGON)
+                    break;
+
+                if (selectedTool == Tool.CURVED_POLYGON && polygonVertices.isEmpty())
+                    polygonVertices.push(new PVector(mouseX, mouseY));
+                polygonVertices.push(new PVector(mouseX, mouseY));
                 break;
             case RIGHT:
                 selectedTool = Utils.incrementEnum(Tool.values(), selectedTool.ordinal());
@@ -110,11 +124,10 @@ public final class Main extends PApplet {
     }
 
     public void mouseReleased() {
-        if (mouseButton != LEFT)
+        if (mouseButton != LEFT || selectedTool == Tool.POLYGON || selectedTool == Tool.CURVED_POLYGON)
             return;
 
         pushDrawing();
-        cursor(ARROW);
     }
 
     public void keyPressed(KeyEvent event) {
@@ -122,7 +135,58 @@ public final class Main extends PApplet {
             controlModifiedKeyPress(event);
     }
 
-    void controlModifiedKeyPress(KeyEvent event) {
+    private void updatePolygon() {
+        beginShape();
+        for (PVector vertex : polygonVertices) {
+            if (selectedTool == Tool.POLYGON)
+                vertex(vertex.x, vertex.y);
+            else
+                curveVertex(vertex.x, vertex.y);
+        }
+
+        if (cannotClosePolygon()) {
+            if (selectedTool == Tool.POLYGON)
+                vertex(mouseX, mouseY);
+            else {
+                curveVertex(mouseX, mouseY);
+                curveVertex(mouseX, mouseY);
+            }
+            endShape(OPEN);
+            return;
+        }
+
+        PVector startVertex = polygonVertices.getFirst();
+        boolean isMouseCloseToStart = Utils.isPointWithinDistance(mouseX, mouseY,
+                (int) startVertex.x, (int) startVertex.y, POLYGON_CLOSE_SNAP_DISTANCE);
+        if (isMouseCloseToStart) {
+            if (mousePressed) {
+                polygonVertices.pop();
+                if (selectedTool == Tool.CURVED_POLYGON) {
+                    polygonVertices.push(startVertex);
+                    polygonVertices.push(startVertex);
+                }
+
+                pushDrawing();
+            } else {
+                if (selectedTool == Tool.POLYGON)
+                    vertex(startVertex.x, startVertex.y);
+                else {
+                    curveVertex(startVertex.x, startVertex.y);
+                    curveVertex(startVertex.x, startVertex.y);
+                }
+            }
+        } else {
+            if (selectedTool == Tool.POLYGON)
+                vertex(mouseX, mouseY);
+            else {
+                curveVertex(mouseX, mouseY);
+                curveVertex(mouseX, mouseY);
+            }
+        }
+        endShape(OPEN);
+    }
+
+    private void controlModifiedKeyPress(KeyEvent event) {
         switch (Character.toLowerCase(keyCode)) {
             case 'z':
                 undo();
@@ -139,26 +203,28 @@ public final class Main extends PApplet {
         }
     }
 
-    void pushDrawing() {
+    private void pushDrawing() {
+        cursor(ARROW);
         drawables.push(selectedTool.getDrawable(this));
         undoneDrawables.clear();
+        polygonVertices.clear();
     }
 
-    void undo() {
+    private void undo() {
         if (drawables.isEmpty())
             return;
 
         undoneDrawables.push(drawables.pop());
     }
 
-    void redo() {
+    private void redo() {
         if (undoneDrawables.isEmpty())
             return;
 
         drawables.push(undoneDrawables.pop());
     }
 
-    void save(boolean isAltPressed) {
+    private void save(boolean isAltPressed) {
         if (drawables.isEmpty())
             return;
 
@@ -183,7 +249,7 @@ public final class Main extends PApplet {
             saveSerialized(file);
     }
 
-    void load() {
+    private void load() {
         JFileChooser chooser = new JFileChooser();
         String extension = "json";
         String description = "Drawing App Sketch (*.json)";
@@ -200,7 +266,7 @@ public final class Main extends PApplet {
             drawables.push(DrawableFactory.create(serializedDrawable));
     }
 
-    void exportAsProcessingCode(File file) {
+    private void exportAsProcessingCode(File file) {
         if (file == null)
             return;
 
@@ -245,7 +311,7 @@ public final class Main extends PApplet {
         writer.close();
     }
 
-    void saveSerialized(File file) {
+    private void saveSerialized(File file) {
         if (file == null)
             return;
 
@@ -254,6 +320,11 @@ public final class Main extends PApplet {
             array.append(drawable.toJson());
 
         saveJSONArray(array, file.getAbsolutePath());
+    }
+
+    private boolean cannotClosePolygon() {
+        return (selectedTool == Tool.POLYGON && polygonVertices.size() < 3)
+                || (selectedTool == Tool.CURVED_POLYGON && polygonVertices.size() < 4);
     }
 
     public int getStartX() {
@@ -280,6 +351,14 @@ public final class Main extends PApplet {
 
     public int getStrokeWeight() {
         return strokeWeight;
+    }
+
+    public PVector[] getPolygonVerticesArray() {
+        return polygonVertices.toArray(new PVector[0]);
+    }
+
+    public Stack<PVector> getPolygonVertices() {
+        return polygonVertices;
     }
 
     enum PropertyChangeMode {

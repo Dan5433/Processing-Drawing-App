@@ -56,4 +56,8 @@ public final class Utils {
 
         return chooser.getSelectedFile();
     }
+
+    public static boolean isPointWithinDistance(int x, int y, int compareX, int compareY, int distance) {
+        return Math.pow(compareX - x, 2) + Math.pow(compareY - y, 2) <= Math.pow(distance, 2);
+    }
 }
