@@ -52,13 +52,34 @@ public enum Tool {
             main -> {
                 int startX = main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight();
                 int startY = main.mouseY - main.PREVIEW_SIZE - main.getStrokeWeight();
-                float size = (float) (main.PREVIEW_SIZE + main.getStrokeWeight()) / 2;
+                float half = (float) (main.PREVIEW_SIZE + main.getStrokeWeight()) / 2;
                 main.beginShape();
                 main.vertex(startX, main.mouseY);
-                main.vertex(startX, main.mouseY - size);
-                main.vertex(startX + size, startY);
-                main.vertex(main.mouseX, main.mouseY - size);
+                main.vertex(startX, main.mouseY - half);
+                main.vertex(startX + half, startY);
+                main.vertex(main.mouseX, main.mouseY - half);
                 main.vertex(main.mouseX, main.mouseY);
+                main.endShape(PConstants.CLOSE);
+            },
+            main -> {
+                PShape polygon = main.getPolygon();
+                if (polygon != null)
+                    main.shape(polygon);
+            },
+            main -> new src.Drawable.Polygon(main.getPolygonVertices(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
+    CURVED_POLYGON(
+            main -> {
+                int startX = main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight();
+                int startY = main.mouseY - main.PREVIEW_SIZE - main.getStrokeWeight();
+                float half = (float) (main.PREVIEW_SIZE + main.getStrokeWeight()) / 2;
+                main.beginShape();
+                main.curveVertex(startX, main.mouseY);
+                main.curveVertex(startX, main.mouseY);
+                main.curveVertex(startX, main.mouseY - half);
+                main.curveVertex(startX + half, startY);
+                main.curveVertex(main.mouseX, main.mouseY - half);
+                main.curveVertex(main.mouseX, main.mouseY);
+                main.curveVertex(main.mouseX, main.mouseY);
                 main.endShape(PConstants.CLOSE);
             },
             main -> {

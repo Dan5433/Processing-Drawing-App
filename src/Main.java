@@ -104,7 +104,7 @@ public final class Main extends PApplet {
                 cursor(CROSS);
                 startX = mouseX;
                 startY = mouseY;
-                if (selectedTool != Tool.POLYGON)
+                if (selectedTool != Tool.POLYGON && selectedTool != Tool.CURVED_POLYGON)
                     break;
 
                 polygonVertices.push(new PVector(mouseX, mouseY));
@@ -136,7 +136,7 @@ public final class Main extends PApplet {
 
     @Override
     public void mouseMoved() {
-        if (polygon == null || selectedTool != Tool.POLYGON)
+        if (polygon == null || (selectedTool != Tool.POLYGON && selectedTool != Tool.CURVED_POLYGON))
             return;
 
         updatePolygon();
@@ -150,12 +150,22 @@ public final class Main extends PApplet {
     void updatePolygon() {
         polygon = createShape();
         polygon.beginShape();
-        for (PVector vertex : polygonVertices)
-            polygon.vertex(vertex.x, vertex.y);
+        for (PVector vertex : polygonVertices) {
+            if (selectedTool == Tool.POLYGON)
+                polygon.vertex(vertex.x, vertex.y);
+            else
+                polygon.curveVertex(vertex.x, vertex.y);
+            
+        }
         polygon.endShape(OPEN);
 
         if (polygonVertices.size() < 3) {
-            polygon.vertex(mouseX, mouseY);
+            if (selectedTool == Tool.POLYGON)
+                polygon.vertex(mouseX, mouseY);
+            else {
+                polygon.curveVertex(mouseX, mouseY);
+                polygon.curveVertex(mouseX, mouseY);
+            }
             return;
         }
 
@@ -166,10 +176,22 @@ public final class Main extends PApplet {
                 polygon.setVertex(polygonVertices.size() - 1, polygon.getVertex(0));
                 polygonVertices.pop();
                 pushDrawing();
-            } else
-                polygon.vertex(polygon.getVertexX(0), polygon.getVertexY(0));
-        } else
-            polygon.vertex(mouseX, mouseY);
+            } else {
+                if (selectedTool == Tool.POLYGON)
+                    polygon.vertex(polygon.getVertexX(0), polygon.getVertexY(0));
+                else {
+                    polygon.curveVertex(polygon.getVertexX(0), polygon.getVertexY(0));
+                    polygon.curveVertex(polygon.getVertexX(0), polygon.getVertexY(0));
+                }
+            }
+        } else {
+            if (selectedTool == Tool.POLYGON)
+                polygon.vertex(mouseX, mouseY);
+            else {
+                polygon.curveVertex(mouseX, mouseY);
+                polygon.curveVertex(mouseX, mouseY);
+            }
+        }
     }
 
     void controlModifiedKeyPress(KeyEvent event) {
