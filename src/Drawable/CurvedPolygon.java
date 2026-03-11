@@ -1,6 +1,7 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -48,7 +49,7 @@ public class CurvedPolygon extends Drawable {
         for (PVector vertex : vertices) {
             app.curveVertex(vertex.x, vertex.y);
         }
-        app.endShape();
+        app.endShape(PConstants.CLOSE);
     }
 
     @Override

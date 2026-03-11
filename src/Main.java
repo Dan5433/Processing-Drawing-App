@@ -39,8 +39,8 @@ public final class Main extends PApplet {
     private final Stack<PVector> polygonVertices = new Stack<>();
 
     public void settings() {
-        size(800, 450);
-//        fullScreen();
+//        size(800, 450);
+        fullScreen();
     }
 
     public void setup() {
@@ -161,8 +161,11 @@ public final class Main extends PApplet {
         if (isMouseCloseToStart) {
             if (mousePressed) {
                 polygonVertices.pop();
-                if (selectedTool == Tool.CURVED_POLYGON)
-                    polygonVertices.push(polygonVertices.peek());
+                if (selectedTool == Tool.CURVED_POLYGON) {
+                    polygonVertices.push(startVertex);
+                    polygonVertices.push(startVertex);
+                }
+
                 pushDrawing();
             } else {
                 if (selectedTool == Tool.POLYGON)
