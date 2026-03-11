@@ -57,7 +57,7 @@ public class CurvedPolygon extends Drawable {
         StringBuilder sb = new StringBuilder();
         sb.append("beginShape();\n");
         for (PVector vertex : vertices) {
-            sb.append(String.format("curveVertex(%d,%d);\n", vertex.x, vertex.y));
+            sb.append(String.format("curveVertex(%f,%f);\n", vertex.x, vertex.y));
         }
         sb.append("endShape(CLOSE);\n");
         return sb.toString();
