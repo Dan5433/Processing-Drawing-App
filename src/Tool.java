@@ -87,7 +87,7 @@ public enum Tool {
                 if (polygon != null)
                     main.shape(polygon);
             },
-            main -> new src.Drawable.Polygon(main.getPolygonVertices(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
+            main -> new src.Drawable.CurvedPolygon(main.getPolygonVertices(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
 
 
     private final Consumer<Main> drawPreview;
