@@ -1,7 +1,6 @@
 package src;
 
 import processing.core.PConstants;
-import processing.core.PShape;
 import src.Drawable.Drawable;
 
 import java.util.function.Consumer;
@@ -61,12 +60,9 @@ public enum Tool {
                 main.vertex(main.mouseX, main.mouseY);
                 main.endShape(PConstants.CLOSE);
             },
-            main -> {
-                PShape polygon = main.getPolygon();
-                if (polygon != null)
-                    main.shape(polygon);
+            _ -> {
             },
-            main -> new src.Drawable.Polygon(main.getPolygonVertices(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
+            main -> new src.Drawable.Polygon(main.getPolygonVerticesArray(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
     CURVED_POLYGON(
             main -> {
                 int startX = main.mouseX - main.PREVIEW_SIZE - main.getStrokeWeight();
@@ -82,12 +78,9 @@ public enum Tool {
                 main.curveVertex(main.mouseX, main.mouseY);
                 main.endShape(PConstants.CLOSE);
             },
-            main -> {
-                PShape polygon = main.getPolygon();
-                if (polygon != null)
-                    main.shape(polygon);
+            _ -> {
             },
-            main -> new src.Drawable.CurvedPolygon(main.getPolygonVertices(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
+            main -> new src.Drawable.CurvedPolygon(main.getPolygonVerticesArray(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
 
 
     private final Consumer<Main> drawPreview;

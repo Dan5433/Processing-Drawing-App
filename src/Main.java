@@ -1,7 +1,6 @@
 package src;
 
 import processing.core.PApplet;
-import processing.core.PShape;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -38,7 +37,6 @@ public final class Main extends PApplet {
     private int startY;
 
     private final Stack<PVector> polygonVertices = new Stack<>();
-    private PShape polygon;
 
     public void settings() {
         size(800, 450);
@@ -66,16 +64,14 @@ public final class Main extends PApplet {
         stroke(getStrokeColor());
         strokeWeight(strokeWeight);
 
-        if (polygon != null) {
-            polygon.setFill(getFillColor());
-            polygon.setStroke(getStrokeColor());
-            polygon.setStrokeWeight(strokeWeight);
-        }
-
-        if (polygon == null && (!mousePressed || mouseButton != LEFT))
+        if (polygonVertices.isEmpty() && (!mousePressed || mouseButton != LEFT))
             selectedTool.drawPreview(this);
         else
             selectedTool.draw(this);
+
+
+        if (!polygonVertices.isEmpty() && (selectedTool == Tool.POLYGON || selectedTool == Tool.CURVED_POLYGON))
+            updatePolygon();
     }
 
     public void mouseWheel(MouseEvent event) {
@@ -110,8 +106,6 @@ public final class Main extends PApplet {
                 if (selectedTool == Tool.CURVED_POLYGON && polygonVertices.isEmpty())
                     polygonVertices.push(new PVector(mouseX, mouseY));
                 polygonVertices.push(new PVector(mouseX, mouseY));
-                updatePolygon();
-
                 break;
             case RIGHT:
                 selectedTool = Utils.incrementEnum(Tool.values(), selectedTool.ordinal());
@@ -136,66 +130,57 @@ public final class Main extends PApplet {
         pushDrawing();
     }
 
-    @Override
-    public void mouseMoved() {
-        if (polygon == null || (selectedTool != Tool.POLYGON && selectedTool != Tool.CURVED_POLYGON))
-            return;
-
-        updatePolygon();
-    }
-
     public void keyPressed(KeyEvent event) {
         if (event.isControlDown() || event.isMetaDown())
             controlModifiedKeyPress(event);
     }
 
     private void updatePolygon() {
-        polygon = createShape();
-        polygon.beginShape();
+        beginShape();
         for (PVector vertex : polygonVertices) {
             if (selectedTool == Tool.POLYGON)
-                polygon.vertex(vertex.x, vertex.y);
+                vertex(vertex.x, vertex.y);
             else
-                polygon.curveVertex(vertex.x, vertex.y);
+                curveVertex(vertex.x, vertex.y);
         }
-        polygon.endShape(OPEN);
 
         if (cannotClosePolygon()) {
             if (selectedTool == Tool.POLYGON)
-                polygon.vertex(mouseX, mouseY);
+                vertex(mouseX, mouseY);
             else {
-                polygon.curveVertex(mouseX, mouseY);
-                polygon.curveVertex(mouseX, mouseY);
+                curveVertex(mouseX, mouseY);
+                curveVertex(mouseX, mouseY);
             }
+            endShape(OPEN);
             return;
         }
 
+        PVector startVertex = polygonVertices.getFirst();
         boolean isMouseCloseToStart = Utils.isPointWithinDistance(mouseX, mouseY,
-                (int) polygon.getVertexX(0), (int) polygon.getVertexY(0), POLYGON_CLOSE_SNAP_DISTANCE);
+                (int) startVertex.x, (int) startVertex.y, POLYGON_CLOSE_SNAP_DISTANCE);
         if (isMouseCloseToStart) {
             if (mousePressed) {
-                if (selectedTool == Tool.CURVED_POLYGON)
-                    polygon.setVertex(polygonVertices.size() - 2, polygon.getVertex(0));
-                polygon.setVertex(polygonVertices.size() - 1, polygon.getVertex(0));
-
                 polygonVertices.pop();
+                if (selectedTool == Tool.CURVED_POLYGON)
+                    polygonVertices.push(polygonVertices.peek());
                 pushDrawing();
             } else {
                 if (selectedTool == Tool.POLYGON)
-                    polygon.vertex(polygon.getVertexX(0), polygon.getVertexY(0));
+                    vertex(startVertex.x, startVertex.y);
                 else {
-                    polygon.curveVertex(polygon.getVertexX(0), polygon.getVertexY(0));
-                    polygon.curveVertex(polygon.getVertexX(0), polygon.getVertexY(0));
+                    curveVertex(startVertex.x, startVertex.y);
+                    curveVertex(startVertex.x, startVertex.y);
                 }
             }
         } else {
             if (selectedTool == Tool.POLYGON)
-                polygon.vertex(mouseX, mouseY);
+                vertex(mouseX, mouseY);
             else {
-                polygon.curveVertex(mouseX, mouseY);
-                polygon.curveVertex(mouseX, mouseY);
+                curveVertex(mouseX, mouseY);
+                curveVertex(mouseX, mouseY);
             }
         }
+        endShape(OPEN);
     }
 
     private void controlModifiedKeyPress(KeyEvent event) {
@@ -220,7 +205,6 @@ public final class Main extends PApplet {
         drawables.push(selectedTool.getDrawable(this));
         undoneDrawables.clear();
         polygonVertices.clear();
-        polygon = null;
     }
 
     private void undo() {
@@ -366,12 +350,12 @@ public final class Main extends PApplet {
         return strokeWeight;
     }
 
-    public PShape getPolygon() {
-        return polygon;
+    public PVector[] getPolygonVerticesArray() {
+        return polygonVertices.toArray(new PVector[0]);
     }
 
-    public PVector[] getPolygonVertices() {
-        return polygonVertices.toArray(new PVector[0]);
+    public Stack<PVector> getPolygonVertices() {
+        return polygonVertices;
     }
 
     enum PropertyChangeMode {

@@ -1,14 +1,12 @@
 package src.Drawable;
 
 import processing.core.PApplet;
-import processing.core.PShape;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 public class CurvedPolygon extends Drawable {
     protected PVector[] vertices;
-    protected PShape shape;
 
     public CurvedPolygon(PVector[] vertices, int fillColor, int strokeColor, int strokeWeight) {
         super(fillColor, strokeColor, strokeWeight);
@@ -43,18 +41,14 @@ public class CurvedPolygon extends Drawable {
 
     @Override
     public void draw(PApplet app) {
-        if (shape == null) {
-            shape = app.createShape();
-            shape.beginShape();
-            for (PVector vertex : vertices) {
-                shape.curveVertex(vertex.x, vertex.y);
-            }
-            shape.endShape(PApplet.CLOSE);
-            shape.setFill(fillColor);
-            shape.setStroke(strokeColor);
-            shape.setStrokeWeight(strokeWeight);
+        app.fill(fillColor);
+        app.stroke(strokeColor);
+        app.strokeWeight(strokeWeight);
+        app.beginShape();
+        for (PVector vertex : vertices) {
+            app.curveVertex(vertex.x, vertex.y);
         }
-        app.shape(shape);
+        app.endShape();
     }
 
     @Override
