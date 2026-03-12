@@ -133,6 +133,9 @@ public final class Main extends PApplet {
     }
 
     public void keyPressed(KeyEvent event) {
+        if (!polygonVertices.isEmpty() || mousePressed)
+            return;
+
         if (event.isControlDown() || event.isMetaDown())
             controlModifiedKeyPress(event);
     }
