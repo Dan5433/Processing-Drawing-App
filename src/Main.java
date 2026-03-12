@@ -37,6 +37,7 @@ public final class Main extends PApplet {
     private int startY = -1;
 
     private final Stack<PVector> polygonVertices = new Stack<>();
+    private final Stack<PVector> undonePolygonVertices = new Stack<>();
 
     public void settings() {
 //        size(800, 450);
@@ -133,7 +134,7 @@ public final class Main extends PApplet {
     }
 
     public void keyPressed(KeyEvent event) {
-        if (!polygonVertices.isEmpty() || mousePressed)
+        if (mousePressed)
             return;
 
         if (event.isControlDown() || event.isMetaDown())
@@ -212,6 +213,7 @@ public final class Main extends PApplet {
         cursor(ARROW);
         drawables.push(selectedTool.getDrawable(this));
         undoneDrawables.clear();
+        undonePolygonVertices.clear();
         polygonVertices.clear();
 
         startX = -1;
@@ -219,21 +221,24 @@ public final class Main extends PApplet {
     }
 
     private void undo() {
-        if (drawables.isEmpty())
-            return;
-
-        undoneDrawables.push(drawables.pop());
+        if (selectedTool == Tool.POLYGON && polygonVertices.size() == 1 || selectedTool == Tool.CURVED_POLYGON && polygonVertices.size() == 2) {
+            polygonVertices.clear();
+            undonePolygonVertices.clear();
+        } else if (!polygonVertices.isEmpty())
+            undonePolygonVertices.push(polygonVertices.pop());
+        else if (!drawables.isEmpty())
+            undoneDrawables.push(drawables.pop());
     }
 
     private void redo() {
-        if (undoneDrawables.isEmpty())
-            return;
-
-        drawables.push(undoneDrawables.pop());
+        if (!undonePolygonVertices.isEmpty())
+            polygonVertices.push(undonePolygonVertices.pop());
+        else if (!undoneDrawables.isEmpty())
+            drawables.push(undoneDrawables.pop());
     }
 
     private void save(boolean isAltPressed) {
-        if (drawables.isEmpty())
+        if (drawables.isEmpty() || !polygonVertices.isEmpty() || mousePressed)
             return;
 
         JFileChooser chooser = new JFileChooser();
@@ -258,6 +263,9 @@ public final class Main extends PApplet {
     }
 
     private void load() {
+        if (!polygonVertices.isEmpty() || mousePressed)
+            return;
+
         JFileChooser chooser = new JFileChooser();
         String extension = "json";
         String description = "Drawing App Sketch (*.json)";
