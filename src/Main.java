@@ -33,8 +33,8 @@ public final class Main extends PApplet {
     private PropertyChangeMode propertyChangeMode = PropertyChangeMode.FILL_COLOR;
     private int strokeWeight = 1;
 
-    private int startX;
-    private int startY;
+    private int startX = -1;
+    private int startY = -1;
 
     private final Stack<PVector> polygonVertices = new Stack<>();
 
@@ -64,7 +64,7 @@ public final class Main extends PApplet {
         stroke(getStrokeColor());
         strokeWeight(strokeWeight);
 
-        if (polygonVertices.isEmpty() && (!mousePressed || mouseButton != LEFT))
+        if (polygonVertices.isEmpty() && (!mousePressed || mouseButton != LEFT) && startX < 0 && startY < 0)
             selectedTool.drawPreview(this);
         else
             selectedTool.draw(this);
@@ -108,6 +108,8 @@ public final class Main extends PApplet {
                 polygonVertices.push(new PVector(mouseX, mouseY));
                 break;
             case RIGHT:
+                if (!polygonVertices.isEmpty() || startX >= 0 || startY >= 0)
+                    break;
                 selectedTool = Utils.incrementEnum(Tool.values(), selectedTool.ordinal());
                 break;
             case CENTER:
@@ -208,6 +210,9 @@ public final class Main extends PApplet {
         drawables.push(selectedTool.getDrawable(this));
         undoneDrawables.clear();
         polygonVertices.clear();
+
+        startX = -1;
+        startY = -1;
     }
 
     private void undo() {
