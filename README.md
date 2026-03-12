@@ -6,11 +6,11 @@ A drawing app made with the Processing 4 language
 
 ### Complete
 
-* Drawing Tools (point, line, rect, ellipse, triangle)
+* Simple Shape Tools (point, line, rect, ellipse, triangle)
+* Polygon Tool (straight and curved)
 * Preset Colours (black, red, orange, yellow, green, cyan, blue, violet, magenta, white)
 * Colour Swapping with Shift Key
-* Polygon Tool (straight and curved)
-* Undo and Redo
+* Undo and Redo (supports polygon vertices)
 * Exporting as a Processing Sketch
 * Saving and Loading Serialised JSON
 
