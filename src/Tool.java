@@ -83,8 +83,10 @@ public enum Tool {
             main -> new src.Drawable.CurvedPolygon(main.getPolygonVerticesArray(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
     IMAGE(
             main -> {
+                final int frameSize = 3;
                 main.rect(main.mouseX - main.PREVIEW_SIZE, main.mouseY - main.PREVIEW_SIZE, main.mouseX, main.mouseY);
-                main.rect(main.mouseX - main.PREVIEW_SIZE + 2, main.mouseY - main.PREVIEW_SIZE + 2, main.mouseX - 2, main.mouseY - 2);
+                main.rect(main.mouseX - main.PREVIEW_SIZE + frameSize, main.mouseY - main.PREVIEW_SIZE + frameSize,
+                        main.mouseX - frameSize, main.mouseY - frameSize);
             },
             _ -> {
             },
