@@ -1,6 +1,7 @@
 package src;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -39,12 +40,15 @@ public final class Main extends PApplet {
     private final Stack<PVector> polygonVertices = new Stack<>();
     private final Stack<PVector> undonePolygonVertices = new Stack<>();
 
+    private PImage image;
+
     public void settings() {
 //        size(800, 450);
         fullScreen();
     }
 
     public void setup() {
+        imageMode(CENTER);
         rectMode(CORNERS);
         ellipseMode(CORNERS);
 
@@ -57,6 +61,9 @@ public final class Main extends PApplet {
 
     public void draw() {
         background(PremadeColor.WHITE.getColor());
+
+        if (image != null)
+            image(image, (float) pixelWidth / 2, (float) pixelHeight / 2);
 
         for (Drawable drawable : drawables)
             drawable.draw(this);
@@ -206,7 +213,26 @@ public final class Main extends PApplet {
             case 'l':
                 load();
                 break;
+            case 'i':
+                loadImageFromDisk();
+                break;
         }
+    }
+
+    private void loadImageFromDisk() {
+        JFileChooser chooser = new JFileChooser();
+        String[] extensions = {"png", "jpg", "jpeg", "tga", "gif"};
+        String description = "Image File (*.png, *.jpg, *.jpeg, *.tga, *.gif)";
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extensions);
+        chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        chooser.setDialogTitle("Load Image");
+
+        File file = Utils.runFileChooser(chooser, extensions, filter);
+        if (file == null)
+            return;
+
+        image = loadImage(file.getAbsolutePath());
     }
 
     private void pushDrawing() {
@@ -249,7 +275,7 @@ public final class Main extends PApplet {
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setDialogTitle(isAltPressed ? "Export As Processing Sketch" : "Save As Drawing App Sketch");
 
-        File file = Utils.runFileChooser(chooser, extension, filter);
+        File file = Utils.runFileChooser(chooser, new String[]{extension}, filter);
         if (file == null)
             return;
 
@@ -274,7 +300,7 @@ public final class Main extends PApplet {
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
         chooser.setDialogTitle("Load Drawing App Sketch Json");
 
-        File file = Utils.runFileChooser(chooser, extension, filter);
+        File file = Utils.runFileChooser(chooser, new String[]{extension}, filter);
         if (file == null)
             return;
 

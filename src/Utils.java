@@ -39,10 +39,10 @@ public final class Utils {
         writer.printf("strokeWeight(%d);\n", weight);
     }
 
-    public static File runFileChooser(JFileChooser chooser, String extension, FileNameExtensionFilter filter) {
+    public static File runFileChooser(JFileChooser chooser, String[] extensions, FileNameExtensionFilter filter) {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        chooser.setSelectedFile(Paths.get(chooser.getCurrentDirectory().getAbsolutePath(), "drawing." + extension).toFile());
+        chooser.setSelectedFile(Paths.get(chooser.getCurrentDirectory().getAbsolutePath(), "drawing." + extensions[0]).toFile());
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.setFileFilter(filter);
         chooser.setVisible(true);
