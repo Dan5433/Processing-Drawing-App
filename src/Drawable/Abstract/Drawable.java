@@ -1,4 +1,4 @@
-package src.Drawable;
+package src.Drawable.Abstract;
 
 import processing.core.PApplet;
 import processing.data.JSONObject;

@@ -1,7 +1,7 @@
 package src;
 
 import processing.core.PConstants;
-import src.Drawable.Drawable;
+import src.Drawable.Abstract.Drawable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -11,7 +11,7 @@ public enum Tool {
             main -> main.point(main.mouseX - main.PREVIEW_SIZE / 2f, main.mouseY - main.PREVIEW_SIZE / 2f),
             main -> main.point(main.mouseX, main.mouseY),
             main -> new src.Drawable.Point(main.mouseX, main.mouseY,
-                    main.getStrokeColor(), main.getStrokeWeight())),
+                    0, main.getStrokeColor(), main.getStrokeWeight())),
 
     LINE(
             main ->
@@ -80,7 +80,17 @@ public enum Tool {
             },
             _ -> {
             },
-            main -> new src.Drawable.CurvedPolygon(main.getPolygonVerticesArray(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
+            main -> new src.Drawable.CurvedPolygon(main.getPolygonVerticesArray(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight())),
+    IMAGE(
+            main -> {
+                final int frameSize = 3;
+                main.rect(main.mouseX - main.PREVIEW_SIZE, main.mouseY - main.PREVIEW_SIZE, main.mouseX, main.mouseY);
+                main.rect(main.mouseX - main.PREVIEW_SIZE + frameSize, main.mouseY - main.PREVIEW_SIZE + frameSize,
+                        main.mouseX - frameSize, main.mouseY - frameSize);
+            },
+            _ -> {
+            },
+            main -> new src.Drawable.Image(main.getImage(), main.getImagePath(), main.getStartX(), main.getStartY(), main.getFillColor(), main.getStrokeColor(), main.getStrokeWeight()));
 
 
     private final Consumer<Main> drawPreview;

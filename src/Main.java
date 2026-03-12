@@ -1,13 +1,14 @@
 package src;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
-import src.Drawable.Drawable;
-import src.Drawable.DrawableFactory;
+import src.Drawable.Abstract.Drawable;
+import src.Drawable.Factory.DrawableFactory;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -38,6 +39,9 @@ public final class Main extends PApplet {
 
     private final Stack<PVector> polygonVertices = new Stack<>();
     private final Stack<PVector> undonePolygonVertices = new Stack<>();
+
+    private PImage image;
+    private String imagePath;
 
     public void settings() {
 //        size(800, 450);
@@ -101,6 +105,13 @@ public final class Main extends PApplet {
                 cursor(CROSS);
                 startX = mouseX;
                 startY = mouseY;
+                if (selectedTool == Tool.IMAGE) {
+                    addImageFromDisk();
+                    if (image != null)
+                        pushDrawing();
+                    break;
+                }
+
                 if (selectedTool != Tool.POLYGON && selectedTool != Tool.CURVED_POLYGON)
                     break;
 
@@ -127,7 +138,7 @@ public final class Main extends PApplet {
     }
 
     public void mouseReleased() {
-        if (mouseButton != LEFT || selectedTool == Tool.POLYGON || selectedTool == Tool.CURVED_POLYGON)
+        if (mouseButton != LEFT || selectedTool == Tool.POLYGON || selectedTool == Tool.CURVED_POLYGON || selectedTool == Tool.IMAGE)
             return;
 
         pushDrawing();
@@ -209,15 +220,37 @@ public final class Main extends PApplet {
         }
     }
 
+    private void addImageFromDisk() {
+        JFileChooser chooser = new JFileChooser();
+        String[] extensions = {"png", "jpg", "jpeg", "tga", "gif"};
+        String description = "Image File (*.png, *.jpg, *.jpeg, *.tga, *.gif)";
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extensions);
+        chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        chooser.setDialogTitle("Load Image");
+
+        File file = Utils.runFileChooser(chooser, extensions, filter);
+        if (file == null)
+            return;
+
+        imagePath = file.getAbsolutePath();
+        image = loadImage(imagePath);
+    }
+
     private void pushDrawing() {
         cursor(ARROW);
+
         drawables.push(selectedTool.getDrawable(this));
+
         undoneDrawables.clear();
         undonePolygonVertices.clear();
         polygonVertices.clear();
 
         startX = -1;
         startY = -1;
+
+        image = null;
+        imagePath = null;
     }
 
     private void undo() {
@@ -249,7 +282,7 @@ public final class Main extends PApplet {
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setDialogTitle(isAltPressed ? "Export As Processing Sketch" : "Save As Drawing App Sketch");
 
-        File file = Utils.runFileChooser(chooser, extension, filter);
+        File file = Utils.runFileChooser(chooser, new String[]{extension}, filter);
         if (file == null)
             return;
 
@@ -274,12 +307,16 @@ public final class Main extends PApplet {
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
         chooser.setDialogTitle("Load Drawing App Sketch Json");
 
-        File file = Utils.runFileChooser(chooser, extension, filter);
+        File file = Utils.runFileChooser(chooser, new String[]{extension}, filter);
         if (file == null)
             return;
 
-        for (JSONObject serializedDrawable : loadJSONArray(file).objectValues())
-            drawables.push(DrawableFactory.create(serializedDrawable));
+        for (JSONObject serializedDrawable : loadJSONArray(file).objectValues()) {
+            Drawable drawable = DrawableFactory.create(serializedDrawable);
+            if (drawable == null)
+                continue;
+            drawables.push(drawable);
+        }
     }
 
     private void exportAsProcessingCode(File file) {
@@ -332,8 +369,12 @@ public final class Main extends PApplet {
             return;
 
         JSONArray array = new JSONArray();
-        for (Drawable drawable : drawables)
-            array.append(drawable.toJson());
+        for (Drawable drawable : drawables) {
+            JSONObject json = drawable.toJson();
+            if (json == null)
+                continue;
+            array.append(json);
+        }
 
         saveJSONArray(array, file.getAbsolutePath());
     }
@@ -373,8 +414,12 @@ public final class Main extends PApplet {
         return polygonVertices.toArray(new PVector[0]);
     }
 
-    public Stack<PVector> getPolygonVertices() {
-        return polygonVertices;
+    public PImage getImage() {
+        return image;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     enum PropertyChangeMode {
