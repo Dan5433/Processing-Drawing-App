@@ -5,6 +5,7 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
+import src.Drawable.Abstract.Drawable;
 
 public class CurvedPolygon extends Drawable {
     protected PVector[] vertices;

@@ -2,6 +2,7 @@ package src.Drawable;
 
 import processing.core.PApplet;
 import processing.data.JSONObject;
+import src.Drawable.Abstract.TwoPointsDrawable;
 
 public class Triangle extends TwoPointsDrawable {
     public Triangle(int startX, int startY, int endX, int endY, int strokeColor, int fillColor, int strokeWeight) {
