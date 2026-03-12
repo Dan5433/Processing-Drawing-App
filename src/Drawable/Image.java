@@ -1,6 +1,7 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
 import processing.data.JSONObject;
 import src.Drawable.Abstract.SinglePointDrawable;
@@ -25,8 +26,12 @@ public class Image extends SinglePointDrawable {
 
     @Override
     public void draw(PApplet app) {
-        if (image == null)
-            image = app.loadImage(path);
+        if (image == null) {
+            if (!Files.exists(Path.of(path)))
+                image = app.createImage(0, 0, PConstants.RGB);
+            else
+                image = app.loadImage(path);
+        }
         app.image(image, x, y);
     }
 
@@ -41,6 +46,9 @@ public class Image extends SinglePointDrawable {
 
     @Override
     public JSONObject toJson() {
+        if (!Files.exists(Path.of(path)))
+            return null;
+
         JSONObject json = super.toJson();
         json.setString("path", path);
         return json;

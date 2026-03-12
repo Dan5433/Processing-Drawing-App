@@ -311,8 +311,12 @@ public final class Main extends PApplet {
         if (file == null)
             return;
 
-        for (JSONObject serializedDrawable : loadJSONArray(file).objectValues())
-            drawables.push(DrawableFactory.create(serializedDrawable));
+        for (JSONObject serializedDrawable : loadJSONArray(file).objectValues()) {
+            Drawable drawable = DrawableFactory.create(serializedDrawable);
+            if (drawable == null)
+                continue;
+            drawables.push(drawable);
+        }
     }
 
     private void exportAsProcessingCode(File file) {
@@ -365,8 +369,12 @@ public final class Main extends PApplet {
             return;
 
         JSONArray array = new JSONArray();
-        for (Drawable drawable : drawables)
-            array.append(drawable.toJson());
+        for (Drawable drawable : drawables) {
+            JSONObject json = drawable.toJson();
+            if (json == null)
+                continue;
+            array.append(json);
+        }
 
         saveJSONArray(array, file.getAbsolutePath());
     }
