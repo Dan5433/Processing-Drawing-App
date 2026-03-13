@@ -53,6 +53,7 @@ public final class Main extends PApplet {
 
     public void setup() {
         canvas = createGraphics(pixelWidth, pixelHeight);
+
         rectMode(CORNERS);
         ellipseMode(CORNERS);
 
@@ -67,6 +68,8 @@ public final class Main extends PApplet {
         background(PremadeColor.WHITE.getColor());
 
         canvas.beginDraw();
+        canvas.rectMode(CORNERS);
+        canvas.ellipseMode(CORNERS);
         canvas.background(PremadeColor.WHITE.getColor());
         for (Drawable drawable : drawables)
             drawable.draw(this, canvas);
