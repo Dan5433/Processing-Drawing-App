@@ -120,7 +120,8 @@ public final class Main extends PApplet {
                 if (selectedTool == Tool.IMAGE) {
                     addImageFromDisk();
                     if (image != null)
-                        pushDrawing();
+                        drawables.push(selectedTool.getDrawable(this));
+                    resetProperties();
                     break;
                 }
 
@@ -146,14 +147,16 @@ public final class Main extends PApplet {
         if (mouseButton != LEFT || selectedTool != Tool.POINT)
             return;
 
-        pushDrawing();
+        drawables.push(selectedTool.getDrawable(this));
+        resetProperties();
     }
 
     public void mouseReleased() {
         if (mouseButton != LEFT || selectedTool == Tool.POLYGON || selectedTool == Tool.CURVED_POLYGON || selectedTool == Tool.IMAGE)
             return;
 
-        pushDrawing();
+        drawables.push(selectedTool.getDrawable(this));
+        resetProperties();
     }
 
     public void keyPressed(KeyEvent event) {
@@ -195,7 +198,8 @@ public final class Main extends PApplet {
                     polygonVertices.push(startVertex);
                 }
 
-                pushDrawing();
+                drawables.push(selectedTool.getDrawable(this));
+                resetProperties();
             } else {
                 if (selectedTool == Tool.POLYGON)
                     vertex(startVertex.x, startVertex.y);
@@ -252,10 +256,8 @@ public final class Main extends PApplet {
         image = loadImage(imagePath);
     }
 
-    private void pushDrawing() {
+    private void resetProperties() {
         cursor(ARROW);
-
-        drawables.push(selectedTool.getDrawable(this));
 
         undoneDrawables.clear();
         undonePolygonVertices.clear();
