@@ -212,10 +212,13 @@ public final class Main extends PApplet {
                 redo();
                 break;
             case 's':
-                save(event.isAltDown());
+                saveDrawing(event.isAltDown());
                 break;
             case 'l':
                 load();
+                break;
+            case 'e':
+                exportAsImage();
                 break;
         }
     }
@@ -253,6 +256,25 @@ public final class Main extends PApplet {
         imagePath = null;
     }
 
+    private void exportAsImage() {
+        if (drawables.isEmpty())
+            return;
+
+        JFileChooser chooser = new JFileChooser();
+        String[] extensions = {"png", "jpg", "jpeg"};
+        String description = "Image File (*.png, *.jpg, *.jpeg)";
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extensions);
+        chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        chooser.setDialogTitle("Export as Image");
+
+        File file = Utils.runFileChooser(chooser, extensions, filter);
+        if (file == null)
+            return;
+
+        save(file.getAbsolutePath());
+    }
+
     private void undo() {
         if (selectedTool == Tool.POLYGON && polygonVertices.size() == 1 || selectedTool == Tool.CURVED_POLYGON && polygonVertices.size() == 2) {
             polygonVertices.clear();
@@ -270,7 +292,7 @@ public final class Main extends PApplet {
             drawables.push(undoneDrawables.pop());
     }
 
-    private void save(boolean isAltPressed) {
+    private void saveDrawing(boolean isAltPressed) {
         if (drawables.isEmpty() || !polygonVertices.isEmpty() || mousePressed)
             return;
 
@@ -313,8 +335,6 @@ public final class Main extends PApplet {
 
         for (JSONObject serializedDrawable : loadJSONArray(file).objectValues()) {
             Drawable drawable = DrawableFactory.create(serializedDrawable);
-            if (drawable == null)
-                continue;
             drawables.push(drawable);
         }
     }
