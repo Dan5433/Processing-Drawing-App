@@ -1,6 +1,7 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.data.JSONObject;
 import src.Drawable.Abstract.TwoPointsDrawable;
 
@@ -14,10 +15,10 @@ public class Line extends TwoPointsDrawable {
     }
 
     @Override
-    public void draw(PApplet app) {
-        app.stroke(strokeColor);
-        app.strokeWeight(strokeWeight);
-        app.line(startX, startY, endX, endY);
+    public void draw(PApplet app, PGraphics canvas) {
+        canvas.stroke(strokeColor);
+        canvas.strokeWeight(strokeWeight);
+        canvas.line(startX, startY, endX, endY);
     }
 
     @Override

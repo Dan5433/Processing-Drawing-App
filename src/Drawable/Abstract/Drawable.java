@@ -1,6 +1,7 @@
 package src.Drawable.Abstract;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.data.JSONObject;
 
 public abstract class Drawable {
@@ -42,7 +43,7 @@ public abstract class Drawable {
         return strokeWeight;
     }
 
-    public abstract void draw(PApplet app);
+    public abstract void draw(PApplet app, PGraphics canvas);
 
     public abstract String toProcessingCode();
 }

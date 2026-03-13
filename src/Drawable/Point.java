@@ -1,6 +1,7 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.data.JSONObject;
 import src.Drawable.Abstract.SinglePointDrawable;
 
@@ -14,10 +15,10 @@ public class Point extends SinglePointDrawable {
     }
 
     @Override
-    public void draw(PApplet app) {
-        app.stroke(strokeColor);
-        app.strokeWeight(strokeWeight);
-        app.point(x, y);
+    public void draw(PApplet app, PGraphics canvas) {
+        canvas.stroke(strokeColor);
+        canvas.strokeWeight(strokeWeight);
+        canvas.point(x, y);
     }
 
     @Override

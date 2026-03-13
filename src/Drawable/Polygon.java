@@ -1,6 +1,7 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PVector;
 import processing.data.JSONArray;
@@ -43,9 +44,9 @@ public class Polygon extends Drawable {
     }
 
     @Override
-    public void draw(PApplet app) {
+    public void draw(PApplet app, PGraphics canvas) {
         if (shape == null) {
-            shape = app.createShape();
+            shape = canvas.createShape();
             shape.beginShape();
             for (PVector vertex : vertices) {
                 shape.vertex(vertex.x, vertex.y);
@@ -55,7 +56,7 @@ public class Polygon extends Drawable {
             shape.setStroke(strokeColor);
             shape.setStrokeWeight(strokeWeight);
         }
-        app.shape(shape);
+        canvas.shape(shape);
     }
 
     @Override

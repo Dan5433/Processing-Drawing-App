@@ -1,6 +1,7 @@
 package src;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.data.JSONArray;
@@ -24,6 +25,8 @@ public final class Main extends PApplet {
     public final int PREVIEW_SIZE = 15;
     public final int MAX_STROKE_WEIGHT = 12;
     public final int POLYGON_CLOSE_SNAP_DISTANCE = 25;
+
+    private PGraphics canvas;
 
     private final Stack<Drawable> drawables = new Stack<>();
     private final Stack<Drawable> undoneDrawables = new Stack<>();
@@ -49,6 +52,7 @@ public final class Main extends PApplet {
     }
 
     public void setup() {
+        canvas = createGraphics(pixelWidth, pixelHeight);
         rectMode(CORNERS);
         ellipseMode(CORNERS);
 
@@ -62,8 +66,13 @@ public final class Main extends PApplet {
     public void draw() {
         background(PremadeColor.WHITE.getColor());
 
+        canvas.beginDraw();
+        canvas.background(PremadeColor.WHITE.getColor());
         for (Drawable drawable : drawables)
-            drawable.draw(this);
+            drawable.draw(this, canvas);
+        canvas.endDraw();
+
+        image(canvas, 0, 0);
 
         fill(getFillColor());
         stroke(getStrokeColor());
@@ -272,7 +281,7 @@ public final class Main extends PApplet {
         if (file == null)
             return;
 
-        save(file.getAbsolutePath());
+        canvas.save(file.getAbsolutePath());
     }
 
     private void undo() {

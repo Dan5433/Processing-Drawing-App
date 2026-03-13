@@ -2,6 +2,7 @@ package src.Drawable;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -42,15 +43,15 @@ public class CurvedPolygon extends Drawable {
     }
 
     @Override
-    public void draw(PApplet app) {
-        app.fill(fillColor);
-        app.stroke(strokeColor);
-        app.strokeWeight(strokeWeight);
-        app.beginShape();
+    public void draw(PApplet app, PGraphics canvas) {
+        canvas.fill(fillColor);
+        canvas.stroke(strokeColor);
+        canvas.strokeWeight(strokeWeight);
+        canvas.beginShape();
         for (PVector vertex : vertices) {
-            app.curveVertex(vertex.x, vertex.y);
+            canvas.curveVertex(vertex.x, vertex.y);
         }
-        app.endShape(PConstants.CLOSE);
+        canvas.endShape(PConstants.CLOSE);
     }
 
     @Override
