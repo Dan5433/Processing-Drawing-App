@@ -2,6 +2,7 @@ package src.Drawable;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.data.JSONObject;
 import src.Drawable.Abstract.SinglePointDrawable;
@@ -25,14 +26,14 @@ public class Image extends SinglePointDrawable {
     }
 
     @Override
-    public void draw(PApplet app) {
+    public void draw(PApplet app, PGraphics canvas) {
         if (image == null) {
             if (!Files.exists(Path.of(path)))
                 image = app.createImage(0, 0, PConstants.RGB);
             else
                 image = app.loadImage(path);
         }
-        app.image(image, x, y);
+        canvas.image(image, x, y);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package src.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.data.JSONObject;
 import src.Drawable.Abstract.TwoPointsDrawable;
 
@@ -14,11 +15,11 @@ public class Ellipse extends TwoPointsDrawable {
     }
 
     @Override
-    public void draw(PApplet app) {
-        app.stroke(strokeColor);
-        app.fill(fillColor);
-        app.strokeWeight(strokeWeight);
-        app.ellipse(startX, startY, endX, endY);
+    public void draw(PApplet app, PGraphics canvas) {
+        canvas.stroke(strokeColor);
+        canvas.fill(fillColor);
+        canvas.strokeWeight(strokeWeight);
+        canvas.ellipse(startX, startY, endX, endY);
     }
 
     @Override
