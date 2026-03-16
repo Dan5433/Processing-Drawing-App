@@ -13,8 +13,7 @@ import src.Drawable.Factory.DrawableFactory;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Stack;
 
 public final class Main extends PApplet {
@@ -47,8 +46,74 @@ public final class Main extends PApplet {
     private String imagePath;
 
     public void settings() {
-//        size(800, 450);
-        fullScreen();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        boolean fullScreen;
+        System.out.println("Fullscreen? (Y/N):");
+        while (true) {
+            try {
+                String input = reader.readLine();
+                if (input.equalsIgnoreCase("y"))
+                    fullScreen = true;
+                else if (input.equalsIgnoreCase("n"))
+                    fullScreen = false;
+                else
+                    continue;
+                break;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (fullScreen) {
+            fullScreen();
+            return;
+        }
+
+        int canvasWidth, canvasHeight;
+
+        System.out.println("Enter canvas width:");
+        while (true) {
+            try {
+                String input = reader.readLine();
+                try {
+                    canvasWidth = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Not a number");
+                    continue;
+                }
+                if (canvasWidth < 1)
+                    System.out.println("Width too small");
+                else if (canvasWidth > displayWidth)
+                    System.out.println("Width too large");
+                else
+                    break;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        System.out.println("Enter canvas height:");
+        while (true) {
+            try {
+                String input = reader.readLine();
+                try {
+                    canvasHeight = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Not a number");
+                    continue;
+                }
+                if (canvasHeight < 1)
+                    System.out.println("Height too small");
+                else if (canvasHeight > displayHeight)
+                    System.out.println("Height too large");
+                else
+                    break;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        size(canvasWidth, canvasHeight);
     }
 
     public void setup() {
