@@ -84,6 +84,9 @@ public enum Tool {
     IMAGE(
             main -> {
                 final int frameSize = 3;
+                main.fill(PremadeColor.WHITE.getColor());
+                main.stroke(PremadeColor.BLACK.getColor());
+                main.strokeWeight(1);
                 main.rect(main.mouseX - main.PREVIEW_SIZE, main.mouseY - main.PREVIEW_SIZE, main.mouseX, main.mouseY);
                 main.rect(main.mouseX - main.PREVIEW_SIZE + frameSize, main.mouseY - main.PREVIEW_SIZE + frameSize,
                         main.mouseX - frameSize, main.mouseY - frameSize);
