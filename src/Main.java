@@ -249,7 +249,7 @@ public final class Main extends PApplet {
         chooser.setDialogTitle("Load Image");
 
         File file = Utils.runFileChooser(chooser, extensions, filter);
-        if (file == null)
+        if (isInvalidFile(file))
             return;
 
         imagePath = file.getAbsolutePath();
@@ -344,7 +344,7 @@ public final class Main extends PApplet {
         chooser.setDialogTitle("Load Drawing App Sketch Json");
 
         File file = Utils.runFileChooser(chooser, new String[]{extension}, filter);
-        if (file == null)
+        if (isInvalidFile(file))
             return;
 
         for (JSONObject serializedDrawable : loadJSONArray(file).objectValues()) {
@@ -418,6 +418,10 @@ public final class Main extends PApplet {
                 || (selectedTool == Tool.CURVED_POLYGON && polygonVertices.size() < 4);
     }
 
+    private boolean isInvalidFile(File file) {
+        return file == null || !file.exists();
+    }
+
     public int getStartX() {
         return startX;
     }
@@ -456,7 +460,7 @@ public final class Main extends PApplet {
         return imagePath;
     }
 
-    enum PropertyChangeMode {
+    private enum PropertyChangeMode {
         FILL_COLOR,
         STROKE_COLOR,
         STROKE_WEIGHT
