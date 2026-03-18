@@ -1,7 +1,6 @@
 # Processing Drawing App
-
 A drawing app made with the Processing 4 language
-
+![drawing](https://github.com/user-attachments/assets/c6553194-5508-4a18-9c72-30cd7f2a8ba6)
 ## Features
 
 ### Complete
